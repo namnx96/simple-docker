@@ -1,0 +1,43 @@
+version: "3.3"
+name: simple-app
+
+services:
+  mysql8:
+    image: mysql:8.0
+    container_name: mysql8-container
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_SCHEMA}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "false"
+      TZ: 'Asia/Ho_Chi_Minh'
+    ports:
+      - ${DB_PORT}:3306 # [host_port]:[container_port]
+    volumes:
+      - '../data/db/data:/var/lib/mysql' # [host_folder]:[container_folder]
+    restart: unless-stopped
+
+  java_server:
+    container_name: web-server-container
+    build:
+      context: ../ #path to dockerfile
+    ports:
+      - '3002:3001'
+    volumes:
+      - '../data/server_logs/:/server/logs/'
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_SCHEMA: ${DB_SCHEMA}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      SERVER_PORT: 8081
+    depends_on:
+      - mysql8
+    restart: unless-stopped
+
+networks:
+  simple-app-network:
+    driver: bridge
