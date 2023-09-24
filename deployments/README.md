@@ -1,7 +1,8 @@
 ## How to run project with docker compose
 
 - cd to folder deployments and run those commands
-- remember to create `.env.[prod/dev/uat/..]` file for each environment variables
+- remember to create `.env.[dev/uat/prod/...]` file for each environment variables
+
 ### Build project
 - build images: `docker-compose build`
 - build images with specific env file: `docker-compose --env-file .env.dev build`
@@ -11,6 +12,8 @@
 - start project: `docker-compose up -d`, option -d used to make projects run on background
 - run with specific env file: `docker-compose --env-file .env.dev up -d`
 
+- restart project: `docker-compose --env-file .env.dev restart`
+- restart specific container: `docker-compose --env-file .env.dev restart [service_name: java_server]`
 
 ### Monitor project
 - View list container: `docker container ls`
